@@ -1,0 +1,65 @@
+# Go build and binary files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+__debug_bin
+__debug_bin_test
+
+# Go binary
+bin/
+
+# Go object files
+*.o
+*.a
+
+# Go cache files
+.cache/
+*.test
+
+# Go test cache
+test_output/
+
+# Go vendor folder
+vendor/
+
+# Node.js build artifacts
+node_modules/
+
+# React build artifacts
+build/
+
+# Log files and runtime data
+logs/
+*.log
+*.log.*
+*.pid
+*.seed
+*.seed.*
+*.dat
+*.dat.*
+*.old
+*.bak
+*.swp
+
+# Temporary files and directories
+.tmp/
+.temp/
+.tmp-*
+*~
+.DS_Store
+
+# Environment configuration
+.env
+
+# IDE-specific files (VS Code, IntelliJ, etc.)
+.vscode/
+.idea/
+*.iml
+
+# Dependency lock files
+yarn.lock
+package-lock.json

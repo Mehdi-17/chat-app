@@ -20,7 +20,7 @@ func main() {
 	server.OnEvent("/chat", "msg", func(conn socketio.Conn, msg string) string {
 		conn.SetContext(msg)
 		fmt.Println("Message receive : ", conn.ID(), msg)
-		server.BroadcastToRoom("/message", "Room", msg)
+		server.BroadcastToRoom("/chat", "Room", msg)
 		return "Sended message : " + msg
 	})
 

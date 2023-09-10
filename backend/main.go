@@ -13,18 +13,20 @@ func main() {
 	server.OnConnect("/", func(conn socketio.Conn) error {
 		conn.SetContext("")
 		fmt.Println("Connected :", conn.ID())
+		conn.Join("Room")
 		return nil
 	})
 
 	server.OnEvent("/chat", "msg", func(conn socketio.Conn, msg string) string {
 		conn.SetContext(msg)
 		fmt.Println("Message receive : ", conn.ID(), msg)
-		//TODO : implement handler
-		return "recv " + msg
+		server.BroadcastToRoom("/message", "Room", msg)
+		return "Sended message : " + msg
 	})
 
 	server.OnDisconnect("/", func(conn socketio.Conn, reason string) {
 		fmt.Println("Diconnected : ", conn.ID(), reason)
+		conn.Leave("Room")
 	})
 
 	go func() {

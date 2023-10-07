@@ -7,7 +7,7 @@ import (
 )
 
 // addr: configuration options used to specify to the http server where the Ws server will listen connections
-// Can be override by a command-line args, e.g :./main.go -addr :9090
+// Can be overridden by a command-line args, e.g :./main.go -addr :9090
 var addr = flag.String("addr", ":8080", "http server address")
 
 func main() {

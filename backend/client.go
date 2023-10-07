@@ -27,6 +27,11 @@ func newClient(conn *websocket.Conn) *Client {
 
 // ServeWs : upgrade a http request to a Websocket connection and create a client for the ws conn
 func ServeWs(w http.ResponseWriter, r *http.Request) {
+	// security risk but, accept websocket connection from any origins
+	upgrader.CheckOrigin = func(r *http.Request) bool {
+		return true
+	}
+
 	//upgrade the http connection to a Websocket connection
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {

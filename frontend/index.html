@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Real Time chat</title>
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <script src="https://unpkg.com/htmx.org@1.9.6"
+            integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni"
+            crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
+</head>
+<body>
+<div class="container" hx-ext="ws" ws-connect="ws://localhost:8080/ws">
+
+    <!-- Chat messages container -->
+    <div id="chat-messages"></div>
+
+    <!-- Fixed input bar at the bottom -->
+    <form id="input-bar" ws-send>
+        <input id="message-input" type="text" placeholder="Type your message...">
+        <button id="send-button">Send</button>
+    </form>
+</div>
+</body>
+</html>

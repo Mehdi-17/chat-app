@@ -1,55 +1,27 @@
 package main
 
 import (
-	"fmt"
-	socketio "github.com/googollee/go-socket.io"
+	"flag"
 	"log"
 	"net/http"
 )
 
+// addr: configuration options used to specify to the http server where the Ws server will listen connections
+// Can be override by a command-line args, e.g :./main.go -addr :9090
+var addr = flag.String("addr", ":8080", "http server address")
+
 func main() {
-	server := socketio.NewServer(nil)
+	//Parse : reads the command-line args and update the config of the flag. If we doesn't provide args, it will take our default value ":8080"
+	flag.Parse()
 
-	server.OnConnect("/", func(conn socketio.Conn) error {
-		conn.SetContext("")
-		fmt.Println("Connected :", conn.ID())
-		conn.Join("Room")
-		return nil
+	//HandleFunc: handler for http request with the path '/ws'. The http request will be upgrade to a websocket conn and we will create a client
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		ServeWs(w, r)
 	})
 
-	server.OnEvent("/chat", "msg", func(conn socketio.Conn, msg string) string {
-		conn.SetContext(msg)
-		fmt.Println("Message receive : ", conn.ID(), msg)
-		server.BroadcastToRoom("/chat", "Room", msg)
-		return "Sended message : " + msg
-	})
-
-	server.OnDisconnect("/", func(conn socketio.Conn, reason string) {
-		fmt.Println("Diconnected : ", conn.ID(), reason)
-		conn.Leave("Room")
-	})
-
-	go func() {
-		err := server.Serve()
-		if err != nil {
-			log.Fatal("error during serve ", err)
-		}
-	}()
-
-	defer func(server *socketio.Server) {
-		err := server.Close()
-		if err != nil {
-			log.Fatal("Disconnection error ", err)
-		}
-	}(server)
-
-	http.Handle("/socket.io/", server)
-
-	err := http.ListenAndServe(":8080", nil)
-	fmt.Println("Serving on localhost:8080")
-
+	//ListenAndServe : is used to listen to the port we specify on addr
+	err := http.ListenAndServe(*addr, nil)
 	if err != nil {
-		log.Fatal("Server error:", err)
+		log.Fatal(err)
 	}
-
 }

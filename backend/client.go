@@ -42,5 +42,5 @@ func ServeWs(w http.ResponseWriter, r *http.Request) {
 	//create a client for the new websocket connection
 	client := newClient(conn)
 
-	fmt.Printf("A new client has joined us => %v", client)
+	fmt.Printf("A new client has joined us => %v\n", client)
 }

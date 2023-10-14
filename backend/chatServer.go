@@ -7,3 +7,5 @@ type WsServer struct {
 	register   chan *Client
 	unregister chan *Client
 }
+
+//TODO: implement features

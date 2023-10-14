@@ -21,5 +21,11 @@
         <button id="send-button">Send</button>
     </form>
 </div>
+
+<script>
+    document.body.addEventListener("htmx:wsOpen", function (){
+        console.log("The connection with the Websocket is ok.");
+    });
+</script>
 </body>
 </html>

@@ -14,9 +14,12 @@ func main() {
 	//Parse : reads the command-line args and update the config of the flag. If we doesn't provide args, it will take our default value ":8080"
 	flag.Parse()
 
+	wsServer := newWsServer()
+	go wsServer.Run()
+
 	//HandleFunc: handler for http request with the path '/ws'. The http request will be upgrade to a websocket conn and we will create a client
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		ServeWs(w, r)
+		ServeWs(wsServer, w, r)
 	})
 
 	//ListenAndServe : is used to listen to the port we specify on addr

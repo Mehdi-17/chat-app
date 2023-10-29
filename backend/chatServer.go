@@ -6,6 +6,7 @@ type WsServer struct {
 	clients    map[*Client]bool
 	register   chan *Client
 	unregister chan *Client
+	broadcast  chan []byte
 }
 
 // newWsServer: create a new instance of WsServer

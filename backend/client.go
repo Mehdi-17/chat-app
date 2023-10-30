@@ -11,14 +11,16 @@ import (
 const (
 	// writeWait : when the server send a message to a client, it expects the write operation to complete within writeWait limit
 	writeWait = 10 * time.Second
-
 	// pongWait : max time that the server waits for a pong response. Server waits for a pong to ensure the connection is alive
 	pongWait = 60 * time.Second
-
 	// pingPeriod : ping interval to ensure that the connection is active, less than pongWait to allow time for the client to respond
-	pingPeriod = (pongWait * 9) / 10
-
+	pingPeriod     = (pongWait * 9) / 10
 	maxMessageSize = 10000
+)
+
+var (
+	newLine = []byte{'\n'}
+	space   = []byte{' '}
 )
 
 // upgrader : Define a variable to set the read and write buffer size of my chat app
@@ -32,12 +34,14 @@ var upgrader = websocket.Upgrader{
 type Client struct {
 	conn     *websocket.Conn
 	WsServer *WsServer
+	send     chan []byte
 }
 
 func newClient(conn *websocket.Conn, server *WsServer) *Client {
 	return &Client{
 		conn:     conn,
 		WsServer: server,
+		send:     make(chan []byte, 256),
 	}
 }
 
@@ -58,8 +62,7 @@ func ServeWs(wsServer *WsServer, w http.ResponseWriter, r *http.Request) {
 	//create a client for the new websocket connection
 	client := newClient(conn, wsServer)
 
-	//TODO : to implement writePump
-	//go client.writePump()
+	go client.writePump()
 	go client.readPump()
 
 	wsServer.register <- client
@@ -70,12 +73,11 @@ func ServeWs(wsServer *WsServer, w http.ResponseWriter, r *http.Request) {
 // readPump : handler to read message from the websocket connection
 func (client *Client) readPump() {
 	defer func() {
-		//todo : call disconnect func
-		//client.disconnect()
+		client.disconnect()
 	}()
 
 	client.conn.SetReadLimit(maxMessageSize)
-	client.conn.SetReadDeadline(time.Now().Add(pongWait))
+	_ = client.conn.SetReadDeadline(time.Now().Add(pongWait))
 
 	//when receive a pong, updates the read deadline to extend the allowed time for the next Pong message
 	client.conn.SetPongHandler(func(appData string) error {
@@ -96,4 +98,24 @@ func (client *Client) readPump() {
 
 		client.WsServer.broadcast <- jsonMessage
 	}
+}
+
+func (client *Client) writePump() {
+	ticker := time.NewTicker(pingPeriod)
+	defer func() {
+		ticker.Stop()
+		_ = client.conn.Close()
+	}()
+
+	for {
+		select {
+		//TODO Implement writePump here
+		}
+	}
+}
+
+func (client *Client) disconnect() {
+	client.WsServer.unregister <- client
+	close(client.send)
+	_ = client.conn.Close()
 }
